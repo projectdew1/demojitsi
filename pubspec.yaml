@@ -27,6 +27,7 @@ dependencies:
     # The following adds the Cupertino Icons font to your application.
     # Use with the CupertinoIcons class for iOS style icons.
     provider: ^5.0.0
+    uni_links: ^0.5.1
     jaguar_jwt: ^3.0.0
     jitsi_meet: ^4.0.0
     flutter_svg: ^0.19.1

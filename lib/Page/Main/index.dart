@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:demo_jitsi/Config/preference.dart';
@@ -9,24 +10,28 @@ import 'package:demo_jitsi/components/rounded_input_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uni_links/uni_links.dart';
 
 class Main extends StatefulWidget {
   @override
   _MainState createState() => _MainState();
 }
 
-class _MainState extends State<Main> {
+class _MainState extends State<Main> with SingleTickerProviderStateMixin {
   static final JointMethods jointMethods = JointMethods();
   final roomText = TextEditingController();
   bool show = false;
+  bool _initialUriIsHandled = false;
   String name = "";
 
   SharedPreferences preferences;
+  StreamSubscription _sub;
 
   final _focusNode = FocusNode();
 
@@ -44,10 +49,58 @@ class _MainState extends State<Main> {
     });
   }
 
+  void _handleIncomingLinks() {
+    if (!kIsWeb) {
+      _sub = uriLinkStream.listen((Uri uri) {
+        if (!mounted) return;
+        print('got uri: $uri');
+        if (uri != null) {
+          setState(() {
+            roomText.text = uri.toString();
+            // _err = null;
+          });
+          _joinMeeting();
+        }
+      }, onError: (Object err) {
+        if (!mounted) return;
+        print('got err: $err');
+      });
+    }
+  }
+
+  Future<void> _handleInitialUri() async {
+    if (!_initialUriIsHandled) {
+      _initialUriIsHandled = true;
+
+      try {
+        final uri = await getInitialUri();
+        if (uri == null) {
+          print('no initial uri');
+        } else {
+          print('got initial uri: $uri');
+        }
+        if (!mounted) return;
+        if (uri != null) {
+          setState(() => roomText.text = uri.toString());
+          _joinMeeting();
+        }
+      } on PlatformException {
+        // Platform messages may fail but we ignore the exception
+        print('falied to get initial uri');
+      } on FormatException catch (err) {
+        if (!mounted) return;
+        print('malformed initial uri');
+        // setState(() => _err = err);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     setText();
+    _handleIncomingLinks();
+    _handleInitialUri();
     JitsiMeet.addListener(JitsiMeetingListener(
         onConferenceWillJoin: _onConferenceWillJoin,
         onConferenceJoined: _onConferenceJoined,
@@ -64,6 +117,7 @@ class _MainState extends State<Main> {
   void dispose() {
     _focusNode.dispose();
     JitsiMeet.removeAllListeners();
+    _sub?.cancel();
     super.dispose();
   }
 
