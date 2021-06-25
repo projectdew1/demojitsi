@@ -6,11 +6,14 @@ PODS:
   - JitsiMeetSDK (3.3.0)
   - shared_preferences (0.0.1):
     - Flutter
+  - uni_links (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - jitsi_meet (from `.symlinks/plugins/jitsi_meet/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - uni_links (from `.symlinks/plugins/uni_links/ios`)
 
 SPEC REPOS:
   trunk:
@@ -23,12 +26,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/jitsi_meet/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
+  uni_links:
+    :path: ".symlinks/plugins/uni_links/ios"
 
 SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   jitsi_meet: a797e5ffdbc1da9d424c52b1bfe3b2a803b05e31
   JitsiMeetSDK: 3b1d3757f2166b28cd03f907b47091db064302b3
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
 
 PODFILE CHECKSUM: 313bcacd7efa7565aef5dfb4c85b8cc3ff754e1d
 
