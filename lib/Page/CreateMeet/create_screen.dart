@@ -76,6 +76,29 @@ class _CreateScreenState extends State<CreateScreen> {
     bool isAudioMuted = await prefs.getBool(AUDIO_MUTE_JITSI_C);
     bool isVideoMuted = await prefs.getBool(VIDEO_MUTE_JITSI_C);
 
+    if (serverUrl.trim() == "") {
+      serverUrl = "https://meet.frappet.com/";
+      int http = room.text.indexOf("://");
+      if (http >= 0) {
+        int index = room.text.lastIndexOf("/");
+        int checkName = index + 1;
+        int link = http + 2;
+        String str = room.text.substring(0, index);
+
+        if (http == link) {
+          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+          return;
+        }
+
+        if (room.text.length == checkName) {
+          await EasyLoading.showError('ลิ้งค์ URL กรุณากรอกชื่อห้อง');
+          return;
+        }
+
+        serverUrl = str;
+      }
+    }
+
     final key = '83D8F671657020295CBBE977E90FB313';
     final claimSet = JwtClaim(
       audience: <String>['jitsi'],

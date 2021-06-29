@@ -42,7 +42,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
     prefs.setString(EMAIL_JITSI, "");
     prefs.setBool(AUDIO_MUTE_JITSI, false);
     prefs.setBool(VIDEO_MUTE_JITSI, false);
-    prefs.setString(SERVER_JITSI, "https://meet.frappet.com");
+    prefs.setString(SERVER_JITSI, "");
 
     setState(() {
       name = prefs.getString(NAME_JITSI);
@@ -254,6 +254,31 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
       return;
     }
 
+    if (serverUrl.trim() == "") {
+      serverUrl = "https://meet.frappet.com/";
+      int http = roomText.text.indexOf("://");
+      if (http >= 0) {
+        int index = roomText.text.lastIndexOf("/");
+        int checkName = index + 1;
+        int link = http + 2;
+        String str = roomText.text.substring(0, index);
+
+        if (http == link) {
+          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+          return;
+        }
+
+        if (roomText.text.length == checkName) {
+          await EasyLoading.showError('ลิ้งค์ URL กรุณากรอกชื่อห้อง');
+          return;
+        }
+
+        serverUrl = str;
+      }
+    }
+
+    String token = await jointMethods.jwt(roomText.text);
+
     Map<FeatureFlagEnum, bool> featureFlags = {
       FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,
     };
@@ -279,6 +304,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
       // ..audioOnly = isAudioOnly
       ..audioMuted = isAudio
       ..videoMuted = isVideo
+      ..token = token
       ..featureFlags.addAll(featureFlags)
       ..webOptions = {
         "roomName": room,

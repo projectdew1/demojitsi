@@ -10,4 +10,13 @@ class JointMethods {
       return room;
     }
   }
+
+  Future<String> jwt(url) async {
+    int index = url.indexOf("?jwt");
+    if (index >= 0) {
+      return url.substring(index + 5);
+    } else {
+      return "";
+    }
+  }
 }
