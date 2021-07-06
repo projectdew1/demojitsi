@@ -95,8 +95,18 @@ class _CreateScreenState extends State<CreateScreen> {
           return;
         }
 
+        if (str == "https:/" || str == "http:/") {
+          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+          return;
+        }
+
         serverUrl = str;
       }
+    }
+
+    if (roomtxt.indexOf(".") >= 0) {
+      await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+      return;
     }
 
     final key = '83D8F671657020295CBBE977E90FB313';

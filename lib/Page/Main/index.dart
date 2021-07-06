@@ -273,8 +273,18 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
           return;
         }
 
+        if (str == "https:/" || str == "http:/") {
+          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+          return;
+        }
+
         serverUrl = str;
       }
+    }
+
+    if (room.indexOf(".") >= 0) {
+      await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+      return;
     }
 
     String token = await jointMethods.jwt(roomText.text);
