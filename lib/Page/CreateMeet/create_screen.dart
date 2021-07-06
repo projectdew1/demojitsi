@@ -71,7 +71,7 @@ class _CreateScreenState extends State<CreateScreen> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String serverUrl = await prefs.getString(SERVER_JITSI);
-    String serverToken = serverUrl.substring(serverUrl.indexOf('://') + 3);
+
     String roomtxt = await jointMethods.roomConvert(room.text);
     bool isAudioMuted = await prefs.getBool(AUDIO_MUTE_JITSI_C);
     bool isVideoMuted = await prefs.getBool(VIDEO_MUTE_JITSI_C);
@@ -103,6 +103,8 @@ class _CreateScreenState extends State<CreateScreen> {
         serverUrl = str;
       }
     }
+
+    String serverToken = serverUrl.substring(serverUrl.indexOf('://') + 3);
 
     if (roomtxt.indexOf(".") >= 0) {
       await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
