@@ -289,6 +289,10 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
 
     String token = await jointMethods.jwt(roomText.text);
 
+    if (token == "undefined") {
+      token = "";
+    }
+
     Map<FeatureFlagEnum, bool> featureFlags = {
       FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,
     };
