@@ -304,6 +304,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
       } else if (Platform.isIOS) {
         // Disable PIP on iOS as it looks weird
         featureFlags[FeatureFlagEnum.PIP_ENABLED] = false;
+        featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
       }
     }
 
