@@ -52,7 +52,10 @@ class _CreateMeetBodyState extends State<CreateMeetBody> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text('ห้องประชุม',
-              style: TextStyle(fontSize: 14, color: kTextColor)),
+              style: TextStyle(
+                  fontSize: 14,
+                  // color: kTextColor,
+                  fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: size.height * 0.015),
         ListContainer(

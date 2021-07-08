@@ -106,7 +106,10 @@ class _State extends State<Body> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text('ห้องประชุม',
-                style: TextStyle(fontSize: 14, color: kTextColor)),
+                style: TextStyle(
+                    fontSize: 14,
+                    // color: kTextColor,
+                    fontWeight: FontWeight.bold)),
           ),
           SizedBox(height: size.height * 0.015),
           ListContainer(
@@ -188,7 +191,7 @@ class _State extends State<Body> {
               children: [
                 Text('เวอร์ชั่น',
                     style: TextStyle(fontSize: 14, color: kTextColor)),
-                Text('1.0.2',
+                Text('1.0.3',
                     style: TextStyle(fontSize: 14, color: kTextColor)),
               ],
             ),

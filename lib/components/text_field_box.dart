@@ -21,7 +21,10 @@ class TextFieldBox extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(titleText,
-              style: TextStyle(fontSize: 14, color: kTextColor)),
+              style: TextStyle(
+                  fontSize: 14,
+                  // color: kTextColor,
+                  fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: size.height * 0.015),
         ListContainer(
