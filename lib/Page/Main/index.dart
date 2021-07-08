@@ -55,8 +55,11 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
         if (!mounted) return;
         print('got uri: $uri');
         if (uri != null) {
+          String package =
+              uri.toString().replaceAll("com.frappet.meet", "https");
+          int check = uri.toString().indexOf("com.frappet.meet");
           setState(() {
-            roomText.text = uri.toString();
+            roomText.text = check >= 0 ? package : uri.toString();
             // _err = null;
           });
           _joinMeeting();
@@ -255,7 +258,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
     }
 
     if (serverUrl.trim() == "") {
-      serverUrl = "https://meet.frappet.com/";
+      serverUrl = "https://meet.cmss-edubkk.com/";
       int http = roomText.text.indexOf("://");
       if (http >= 0) {
         int index = roomText.text.lastIndexOf("/");
@@ -310,7 +313,8 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
 
     // Define meetings options here
     var options = JitsiMeetingOptions(room: room)
-      ..serverURL = serverUrl
+      // ..serverURL = serverUrl
+      ..serverURL = "https://meet.frappet.com/"
       ..subject = ""
       ..userDisplayName =
           prefs.getString(NAME_JITSI) == "" ? "me" : prefs.getString(NAME_JITSI)

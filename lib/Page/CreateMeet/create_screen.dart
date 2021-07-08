@@ -77,7 +77,7 @@ class _CreateScreenState extends State<CreateScreen> {
     bool isVideoMuted = await prefs.getBool(VIDEO_MUTE_JITSI_C);
 
     if (serverUrl.trim() == "") {
-      serverUrl = "https://meet.frappet.com/";
+      serverUrl = " https://cmss-edubkk.com/";
       int http = room.text.indexOf("://");
       if (http >= 0) {
         int index = room.text.lastIndexOf("/");
