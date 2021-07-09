@@ -314,7 +314,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
     // Define meetings options here
     var options = JitsiMeetingOptions(room: room)
       // ..serverURL = serverUrl
-      ..serverURL = "https://meet.frappet.com/"
+      ..serverURL = serverUrl
       ..subject = ""
       ..userDisplayName =
           prefs.getString(NAME_JITSI) == "" ? "me" : prefs.getString(NAME_JITSI)

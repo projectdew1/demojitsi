@@ -33,7 +33,7 @@ class _MeetingState extends State<Meeting> {
     prefs.setString(EMAIL_JITSI, "");
     prefs.setBool(AUDIO_MUTE_JITSI, false);
     prefs.setBool(VIDEO_MUTE_JITSI, false);
-    prefs.setString(SERVER_JITSI, "https://meet.frappet.com");
+    prefs.setString(SERVER_JITSI, "");
 
     setState(() {
       name = prefs.getString(NAME_JITSI);

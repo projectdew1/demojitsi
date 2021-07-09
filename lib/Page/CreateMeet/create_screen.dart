@@ -22,6 +22,7 @@ class _CreateScreenState extends State<CreateScreen> {
   final room = TextEditingController();
   final name = TextEditingController();
   final email = TextEditingController();
+  final tokenLink = TextEditingController();
 
   // _CreateScreenState(this.room, this.name, this.email);
 
@@ -59,68 +60,80 @@ class _CreateScreenState extends State<CreateScreen> {
 
   _joinMeeting() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    if (room.text.trim() == "") {
-      await EasyLoading.showError('กรุณากรอกชื่อห้อง');
-      return;
-    }
+    // if (room.text.trim() == "") {
+    //   await EasyLoading.showError('กรุณากรอกชื่อห้อง');
+    //   return;
+    // }
 
-    if (name.text.trim() == "") {
-      await EasyLoading.showError('กรุณากรอกชื่อผู้ใช้งาน');
-      return;
-    }
+    // if (name.text.trim() == "") {
+    //   await EasyLoading.showError('กรุณากรอกชื่อผู้ใช้งาน');
+    //   return;
+    // }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String serverUrl = await prefs.getString(SERVER_JITSI);
+    // String serverUrl = await prefs.getString(SERVER_JITSI);
 
-    String roomtxt = await jointMethods.roomConvert(room.text);
+    // String roomtxt = await jointMethods.roomConvert(room.text);
     bool isAudioMuted = await prefs.getBool(AUDIO_MUTE_JITSI_C);
     bool isVideoMuted = await prefs.getBool(VIDEO_MUTE_JITSI_C);
+    final key = '83D8F671657020295CBBE977E90FB313';
 
-    if (serverUrl.trim() == "") {
-      serverUrl = " https://cmss-edubkk.com/";
-      int http = room.text.indexOf("://");
-      if (http >= 0) {
-        int index = room.text.lastIndexOf("/");
-        int checkName = index + 1;
-        int link = http + 2;
-        String str = room.text.substring(0, index);
+    final decClaimSet = verifyJwtHS256Signature(tokenLink.text, key);
 
-        if (http == link) {
-          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
-          return;
-        }
-
-        if (room.text.length == checkName) {
-          await EasyLoading.showError('ลิ้งค์ URL กรุณากรอกชื่อห้อง');
-          return;
-        }
-
-        if (str == "https:/" || str == "http:/") {
-          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
-          return;
-        }
-
-        serverUrl = str;
-      }
-    }
-
-    String serverToken = serverUrl.substring(serverUrl.indexOf('://') + 3);
-
-    if (roomtxt.indexOf(".") >= 0) {
-      await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+    if (decClaimSet['room'] == null) {
+      await EasyLoading.showError('Token ไม่ข้อมูลถูกต้อง');
       return;
     }
 
-    final key = '83D8F671657020295CBBE977E90FB313';
-    final claimSet = JwtClaim(
-      audience: <String>['jitsi'],
-      issuer: '123456',
-      subject: serverToken,
-      otherClaims: <String, dynamic>{"room": roomtxt},
-    );
+    if (decClaimSet.subject == null) {
+      await EasyLoading.showError('Token ไม่ข้อมูลถูกต้อง');
+      return;
+    }
 
-    // Generate a JWT from the claim set
-    final token = issueJwtHS256(claimSet, key);
+    // if (serverUrl.trim() == "") {
+    //   serverUrl = " https://cmss-edubkk.com/";
+    //   int http = room.text.indexOf("://");
+    //   if (http >= 0) {
+    //     int index = room.text.lastIndexOf("/");
+    //     int checkName = index + 1;
+    //     int link = http + 2;
+    //     String str = room.text.substring(0, index);
+
+    //     if (http == link) {
+    //       await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+    //       return;
+    //     }
+
+    //     if (room.text.length == checkName) {
+    //       await EasyLoading.showError('ลิ้งค์ URL กรุณากรอกชื่อห้อง');
+    //       return;
+    //     }
+
+    //     if (str == "https:/" || str == "http:/") {
+    //       await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+    //       return;
+    //     }
+
+    //     serverUrl = str;
+    //   }
+    // }
+
+    // String serverToken = serverUrl.substring(serverUrl.indexOf('://') + 3);
+
+    // if (roomtxt.indexOf(".") >= 0) {
+    //   await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+    //   return;
+    // }
+
+    // final claimSet = JwtClaim(
+    //   audience: <String>['jitsi'],
+    //   issuer: '123456',
+    //   subject: serverToken,
+    //   otherClaims: <String, dynamic>{"room": roomtxt},
+    // );
+
+    // // Generate a JWT from the claim set
+    // final token = issueJwtHS256(claimSet, key);
 
     Map<FeatureFlagEnum, bool> featureFlags = {
       FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,
@@ -137,15 +150,15 @@ class _CreateScreenState extends State<CreateScreen> {
       }
     }
     // Define meetings options here
-    var options = JitsiMeetingOptions(room: roomtxt)
-      ..serverURL = serverUrl
+    var options = JitsiMeetingOptions(room: decClaimSet['room'])
+      ..serverURL = "https://" + decClaimSet.subject
       // ..subject = subjectText.text
-      ..userDisplayName = name.text
-      ..userEmail = email.text
+      // ..userDisplayName = name.text
+      // ..userEmail = email.text
       // ..audioOnly = isAudioOnly
       ..audioMuted = isAudioMuted
       ..videoMuted = isVideoMuted
-      ..token = token
+      ..token = tokenLink.text
       ..featureFlags.addAll(featureFlags)
       ..webOptions = {
         "roomName": room,
@@ -153,7 +166,7 @@ class _CreateScreenState extends State<CreateScreen> {
         "height": "100%",
         "enableWelcomePage": false,
         "chromeExtensionBanner": null,
-        "userInfo": {"displayName": name.text}
+        // "userInfo": {"displayName": name.text}
       };
 
     debugPrint("JitsiMeetingOptions: $options");
@@ -188,7 +201,8 @@ class _CreateScreenState extends State<CreateScreen> {
       child: Scaffold(
         backgroundColor: Color(0xFFF5F6F9),
         appBar: buildAppBar(context),
-        body: CreateMeetBody(room: room, name: name, email: email),
+        body: CreateMeetBody(
+            room: room, name: name, email: email, token: tokenLink),
       ),
     );
   }

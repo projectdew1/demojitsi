@@ -10,8 +10,9 @@ class CreateMeetBody extends StatefulWidget {
   final TextEditingController room;
   final TextEditingController name;
   final TextEditingController email;
+  final TextEditingController token;
 
-  const CreateMeetBody({Key key, this.room, this.name, this.email})
+  const CreateMeetBody({Key key, this.room, this.name, this.email, this.token})
       : super(key: key);
 
   @override
@@ -28,26 +29,32 @@ class _CreateMeetBodyState extends State<CreateMeetBody> {
     return SingleChildScrollView(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
           Widget>[
+        // SizedBox(height: size.height * 0.04),
+        // TextFieldBox(
+        //   titleText: 'ชื่อห้องประชุม',
+        //   hintText: 'กรอกชื่อห้องประชุม',
+        //   controller: widget.room,
+        // ),
+        // SizedBox(height: size.height * 0.02),
+        // TextFieldBox(
+        //   titleText: 'ชื่อผู้ใช้',
+        //   hintText: 'กรอกชื่อผู้ใช้',
+        //   controller: widget.name,
+        // ),
+        // SizedBox(height: size.height * 0.02),
+        // TextFieldBox(
+        //   titleText: 'อีเมล',
+        //   hintText: 'กรอกอีเมล',
+        //   controller: widget.email,
+        // ),
+        // SizedBox(height: size.height * 0.04),
         SizedBox(height: size.height * 0.04),
         TextFieldBox(
-          titleText: 'ชื่อห้องประชุม',
-          hintText: 'กรอกชื่อห้องประชุม',
-          controller: widget.room,
-        ),
-        SizedBox(height: size.height * 0.02),
-        TextFieldBox(
-          titleText: 'ชื่อผู้ใช้',
-          hintText: 'กรอกชื่อผู้ใช้',
-          controller: widget.name,
-        ),
-        SizedBox(height: size.height * 0.02),
-        TextFieldBox(
-          titleText: 'อีเมล',
-          hintText: 'กรอกอีเมล',
-          controller: widget.email,
+          titleText: 'Token',
+          hintText: 'กรอก Token',
+          controller: widget.token,
         ),
         SizedBox(height: size.height * 0.04),
-
         // Mute on Entry
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
