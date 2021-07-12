@@ -275,6 +275,7 @@ class _CreateRoomState extends State<CreateRoom> {
         featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
       } else if (Platform.isIOS) {
         // Disable PIP on iOS as it looks weird
+        featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
         featureFlags[FeatureFlagEnum.PIP_ENABLED] = false;
       }
     }
