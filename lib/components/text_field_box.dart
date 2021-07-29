@@ -6,9 +6,15 @@ class TextFieldBox extends StatelessWidget {
   final String hintText, titleText;
   final ValueChanged<String> onChanged;
   final TextEditingController controller;
+  final FocusNode focusNode;
 
   const TextFieldBox(
-      {Key key, this.hintText, this.titleText, this.onChanged, this.controller})
+      {Key key,
+      this.hintText,
+      this.titleText,
+      this.onChanged,
+      this.controller,
+      this.focusNode})
       : super(key: key);
 
   @override
@@ -34,6 +40,7 @@ class TextFieldBox extends StatelessWidget {
             controller: controller,
             onChanged: onChanged,
             cursorColor: kPrimaryColor,
+            focusNode: focusNode,
             style: TextStyle(fontSize: 15),
             decoration: InputDecoration(
               hintText: hintText,

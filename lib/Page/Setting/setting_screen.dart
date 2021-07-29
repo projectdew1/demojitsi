@@ -1,6 +1,9 @@
+import 'package:demo_jitsi/Config/preference.dart';
 import 'package:demo_jitsi/Page/Setting/components/body.dart';
 import 'package:demo_jitsi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -15,6 +18,18 @@ class _State extends State<SettingScreen> {
       appBar: buildAppBar(context),
       body: Body(),
     );
+  }
+
+  Future<void> CheckServer() async {
+    // print(_server.text[_server.text.length - 1]);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String server = prefs.getString(SERVER_JITSI);
+    if (server.indexOf("/") == 0) {
+      await EasyLoading.showError('Default Server ไม่ถูกต้อง');
+      return;
+    }
+
+    Navigator.pop(context);
   }
 
   AppBar buildAppBar(context) {
@@ -34,7 +49,7 @@ class _State extends State<SettingScreen> {
       ),
       leading: new TextButton(
           onPressed: () {
-            Navigator.pop(context);
+            CheckServer();
           },
           child: Text('ปิด')),
       backgroundColor: Colors.white,

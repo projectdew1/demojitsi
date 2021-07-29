@@ -7,12 +7,14 @@ import 'package:demo_jitsi/Methode/joint.dart';
 import 'package:demo_jitsi/Page/Main/background.dart';
 import 'package:demo_jitsi/components/rounded_button.dart';
 import 'package:demo_jitsi/components/rounded_input_field.dart';
+import 'package:demo_jitsi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jitsi_meet/feature_flag/feature_flag.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,12 +39,12 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
 
   Future<void> setText() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
-    prefs.setString(NAME_JITSI, "");
-    prefs.setString(EMAIL_JITSI, "");
-    prefs.setBool(AUDIO_MUTE_JITSI, false);
-    prefs.setBool(VIDEO_MUTE_JITSI, false);
-    prefs.setString(SERVER_JITSI, "");
+    // prefs.clear();
+    // prefs.setString(NAME_JITSI, "");
+    // prefs.setString(EMAIL_JITSI, "");
+    // prefs.setBool(AUDIO_MUTE_JITSI, false);
+    // prefs.setBool(VIDEO_MUTE_JITSI, false);
+    // prefs.setString(SERVER_JITSI, "");
 
     setState(() {
       name = prefs.getString(NAME_JITSI);
@@ -53,7 +55,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
     if (!kIsWeb) {
       _sub = uriLinkStream.listen((Uri uri) {
         if (!mounted) return;
-        print('got uri: $uri');
+        // print('got uri: $uri');
         if (uri != null) {
           String package =
               uri.toString().replaceAll("com.frappet.meet", "https");
@@ -84,7 +86,13 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
         }
         if (!mounted) return;
         if (uri != null) {
-          setState(() => roomText.text = uri.toString());
+          String package =
+              uri.toString().replaceAll("com.frappet.meet", "https");
+          int check = uri.toString().indexOf("com.frappet.meet");
+          setState(() {
+            roomText.text = check >= 0 ? package : uri.toString();
+            // _err = null;
+          });
           _joinMeeting();
         }
       } on PlatformException {
@@ -246,7 +254,8 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
   _joinMeeting() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String room = await jointMethods.roomConvert(roomText.text);
-    String serverUrl = await prefs.getString(SERVER_JITSI);
+    // String serverUrl = await prefs.getString(SERVER_JITSI);
+    String serverUrl = prefs.getString(SERVER_JITSI) ?? defaultServer;
     bool isVideo = await prefs.getBool(VIDEO_MUTE_JITSI);
     bool isAudio = await prefs.getBool(AUDIO_MUTE_JITSI);
 
@@ -257,33 +266,35 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
       return;
     }
 
-    if (serverUrl.trim() == "") {
-      serverUrl = "https://meet.cmss-edubkk.com/";
-      int http = roomText.text.indexOf("://");
-      if (http >= 0) {
-        int index = roomText.text.lastIndexOf("/");
-        int checkName = index + 1;
-        int link = http + 2;
-        String str = roomText.text.substring(0, index);
+// ##############  server  #################
+    // if (serverUrl.trim() == "") {
 
-        if (http == link) {
-          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
-          return;
-        }
+    int http = roomText.text.indexOf("://");
+    if (http >= 0) {
+      int index = roomText.text.lastIndexOf("/");
+      int checkName = index + 1;
+      int link = http + 2;
+      String str = roomText.text.substring(0, index);
 
-        if (roomText.text.length == checkName) {
-          await EasyLoading.showError('ลิ้งค์ URL กรุณากรอกชื่อห้อง');
-          return;
-        }
-
-        if (str == "https:/" || str == "http:/") {
-          await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
-          return;
-        }
-
-        serverUrl = str;
+      if (http == link) {
+        await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+        return;
       }
+
+      if (roomText.text.length == checkName) {
+        await EasyLoading.showError('ลิ้งค์ URL กรุณากรอกชื่อห้อง');
+        return;
+      }
+
+      if (str == "https:/" || str == "http:/") {
+        await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
+        return;
+      }
+
+      serverUrl = str;
     }
+    // }
+// ##############  server  #################
 
     if (room.indexOf(".") >= 0) {
       await EasyLoading.showError('ชื่อห้องหรือ URL ไม่ถูกต้อง');
@@ -307,7 +318,8 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
       } else if (Platform.isIOS) {
         // Disable PIP on iOS as it looks weird
         featureFlags[FeatureFlagEnum.PIP_ENABLED] = false;
-        featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
+        featureFlags[FeatureFlagEnum.IOS_RECORDING_ENABLED] = true;
+        // featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
       }
     }
 
@@ -316,8 +328,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
       // ..serverURL = serverUrl
       ..serverURL = serverUrl
       ..subject = ""
-      ..userDisplayName =
-          prefs.getString(NAME_JITSI) == "" ? "me" : prefs.getString(NAME_JITSI)
+      ..userDisplayName = prefs.getString(NAME_JITSI) ?? "me"
       ..userEmail = prefs.getString(EMAIL_JITSI)
       // ..iosAppBarRGBAColor = iosAppBarRGBAColor.text
       // ..audioOnly = isAudioOnly
@@ -331,11 +342,7 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
         "height": "100%",
         "enableWelcomePage": false,
         "chromeExtensionBanner": null,
-        "userInfo": {
-          "displayName": prefs.getString(NAME_JITSI) == ""
-              ? "me"
-              : prefs.getString(NAME_JITSI)
-        }
+        "userInfo": {"displayName": prefs.getString(NAME_JITSI) ?? "me"}
       };
 
     debugPrint("JitsiMeetingOptions: $options");
@@ -344,7 +351,8 @@ class _MainState extends State<Main> with SingleTickerProviderStateMixin {
       listener: JitsiMeetingListener(
           onConferenceWillJoin: (message) {
             debugPrint("${options.room} will join with message: $message");
-
+            FocusManager.instance.primaryFocus?.unfocus();
+            roomText.clear();
             Navigator.pushNamed(context, '/background');
           },
           onConferenceJoined: (message) {
