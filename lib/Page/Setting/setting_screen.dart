@@ -23,10 +23,12 @@ class _State extends State<SettingScreen> {
   Future<void> CheckServer() async {
     // print(_server.text[_server.text.length - 1]);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String server = prefs.getString(SERVER_JITSI);
+    String server =  prefs.getString(SERVER_JITSI);
+    if (server != null){
     if (server.indexOf("/") == 0) {
       await EasyLoading.showError('Default Server ไม่ถูกต้อง');
       return;
+    }
     }
 
     Navigator.pop(context);
